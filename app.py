@@ -6,6 +6,7 @@ import utils
 import config
 from datetime import datetime
 import pandas as pd
+import bcrypt
 
 # Page config
 st.set_page_config(
@@ -17,7 +18,7 @@ st.set_page_config(
 # Initialize database
 db.init_db()
 
-# CSS for professional look
+# Custom CSS
 st.markdown("""
 <style>
     .main-header {
@@ -28,23 +29,12 @@ st.markdown("""
         border-radius: 10px;
         margin-bottom: 2rem;
     }
-    .sidebar-info {
-        background: #f0f2f6;
-        padding: 1rem;
-        border-radius: 10px;
-        margin-bottom: 1rem;
-    }
     .balance-card {
         background: #f8f9fa;
         padding: 1.5rem;
         border-radius: 10px;
         border-left: 5px solid #ff6600;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .qr-code {
-        display: flex;
-        justify-content: center;
-        margin: 1rem 0;
     }
     .footer {
         text-align: center;
@@ -70,12 +60,10 @@ with st.sidebar:
     st.markdown("### Navigation")
 
     if auth.is_logged_in():
-        user_email = auth.get_current_user_email()
-        st.write(f"👤 {user_email}")
+        st.write(f"👤 {auth.get_current_user_email()}")
         if st.button("🚪 Logout"):
             auth.logout_user()
             st.rerun()
-        # Dashboard menu
         menu = st.radio("Go to", ["Dashboard", "Exchange", "History", "Profile"])
     else:
         menu = st.radio("Go to", ["Login", "Sign Up"])
@@ -132,7 +120,6 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-        # Get USD equivalent
         usd_rate = utils.get_exchange_rate('G', 'USD')
         usd_value = balance * usd_rate
         with col2:
@@ -153,13 +140,11 @@ else:
             </div>
             """, unsafe_allow_html=True)
 
-        # QR Code
         st.markdown("### 📱 Quick Access")
-        st.write("Scan this QR code to open your dashboard on mobile (or share with others)")
-        qr_data = config.QR_CODE_URL  # You can append user-specific token if needed
+        qr_data = config.QR_CODE_URL
         qr_image = utils.generate_qr_code(qr_data)
         st.image(qr_image, width=200)
-        st.caption("Scan to visit the app")
+        st.caption("Scan this QR code to open your dashboard on mobile")
 
     elif menu == "Exchange":
         st.subheader("🔄 Exchange G to Other Currencies")
@@ -177,26 +162,20 @@ else:
                 elif from_currency == to_currency:
                     st.error("Currencies must be different")
                 else:
-                    # Check balance if selling G
                     if from_currency == "G" and amount > balance:
                         st.error("Insufficient G balance")
                     else:
-                        # Get rate
                         rate = utils.get_exchange_rate(from_currency, to_currency)
                         converted = amount * rate
-                        # Update balance if from_currency == G
                         if from_currency == "G":
                             new_balance = balance - amount
                             db.update_balance(user_id, new_balance)
                             db.add_transaction(user_id, 'sell', amount, 'G', to_currency, rate)
                         elif to_currency == "G":
-                            # Buying G with other currency
                             new_balance = balance + converted
                             db.update_balance(user_id, new_balance)
                             db.add_transaction(user_id, 'buy', converted, from_currency, 'G', rate)
                         else:
-                            # Non-G exchange: not directly affecting G balance, but we can still record
-                            # For simplicity, we'll just simulate a transaction without changing G balance
                             db.add_transaction(user_id, 'exchange', amount, from_currency, to_currency, rate)
                         st.success(f"Exchanged {amount} {from_currency} to {converted:.2f} {to_currency} at rate {rate:.4f}")
                         st.rerun()
@@ -216,9 +195,6 @@ else:
         st.subheader("👤 Profile")
         st.write(f"**Email:** {auth.get_current_user_email()}")
         st.write(f"**User ID:** {user_id}")
-        st.write(f"**Account Created:** (retrieve from DB if needed)")
-
-        # Option to change password (simplified)
         st.markdown("---")
         st.subheader("Change Password")
         with st.form("change_password"):
@@ -227,12 +203,10 @@ else:
             confirm = st.text_input("Confirm New Password", type="password")
             submit = st.form_submit_button("Update Password")
             if submit:
-                # Verify old password
                 user = db.get_user_by_id(user_id)
                 if user and bcrypt.checkpw(old.encode('utf-8'), user['password_hash']):
                     if new == confirm and len(new) >= 6:
                         hashed = bcrypt.hashpw(new.encode('utf-8'), bcrypt.gensalt())
-                        # Update in DB (add a function)
                         conn = db.get_db_connection()
                         c = conn.cursor()
                         c.execute('UPDATE users SET password_hash = ? WHERE id = ?', (hashed, user_id))

@@ -37,7 +37,6 @@ st.markdown("""
     [data-testid="stSidebar"] * {
         color: #0d47a1 !important;
     }
-    /* Sidebar button override */
     .stSidebar .stButton > button {
         background: #64b5f6 !important;
         color: white !important;
@@ -84,14 +83,26 @@ st.markdown("""
         color: #0d47a1;
     }
 
-    /* Main header */
+    /* Main header – bright white text */
     .main-header {
         text-align: center;
-        padding: 1rem;
+        padding: 1.5rem 1rem;
         background: linear-gradient(135deg, #0d47a1, #42a5f5);
-        color: white;
         border-radius: 10px;
         margin-bottom: 2rem;
+    }
+    .main-header h1 {
+        color: #ffffff !important;
+        font-size: 3rem;
+        font-weight: 700;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        margin: 0;
+    }
+    .main-header p {
+        color: #ffffff !important;
+        font-size: 1.1rem;
+        opacity: 0.9;
+        margin-top: 0.3rem;
     }
 
     /* Footer */
@@ -105,7 +116,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Header
+# Header – displays "G Cryptocurrency Exchange" in bright white
 st.markdown(f"""
 <div class="main-header">
     <h1>{config.APP_NAME}</h1>

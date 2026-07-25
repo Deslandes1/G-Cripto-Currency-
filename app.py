@@ -18,30 +18,89 @@ st.set_page_config(
 # Initialize database
 db.init_db()
 
-# Custom CSS
+# ====== CUSTOM CSS – LIGHT BLUE THEME ======
 st.markdown("""
 <style>
-    .main-header {
-        text-align: center;
-        padding: 1rem;
-        background: linear-gradient(135deg, #1e3c72, #2a5298);
-        color: white;
-        border-radius: 10px;
-        margin-bottom: 2rem;
+    /* Main app background */
+    .stApp {
+        background-color: #e3f2fd !important;
     }
+    .stApp [data-testid="stAppViewContainer"] {
+        background-color: transparent !important;
+    }
+
+    /* Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #bbdefb !important;
+        border-right: 1px solid #90caf9;
+    }
+    [data-testid="stSidebar"] * {
+        color: #0d47a1 !important;
+    }
+    /* Sidebar button override */
+    .stSidebar .stButton > button {
+        background: #64b5f6 !important;
+        color: white !important;
+    }
+
+    /* Headers */
+    h1, h2, h3, h4 {
+        color: #0d47a1 !important;
+    }
+
+    /* Input fields */
+    .stTextInput > div > div > input,
+    .stTextArea > div > textarea,
+    .stSelectbox > div > div {
+        background: #ffffff !important;
+        color: #0d47a1 !important;
+        border: 1px solid #90caf9 !important;
+        border-radius: 8px !important;
+    }
+
+    /* Buttons (primary) */
+    .stButton > button {
+        background: linear-gradient(105deg, #1e88e5 0%, #42a5f5 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 40px !important;
+        padding: 0.6rem 2rem !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+        transition: 0.2s;
+    }
+    .stButton > button:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 20px rgba(30, 136, 229, 0.4);
+    }
+
+    /* Cards */
     .balance-card {
-        background: #f8f9fa;
+        background: #ffffff;
         padding: 1.5rem;
         border-radius: 10px;
         border-left: 5px solid #ff6600;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        color: #0d47a1;
     }
+
+    /* Main header */
+    .main-header {
+        text-align: center;
+        padding: 1rem;
+        background: linear-gradient(135deg, #0d47a1, #42a5f5);
+        color: white;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    /* Footer */
     .footer {
         text-align: center;
         margin-top: 3rem;
         padding: 1rem;
-        border-top: 1px solid #ddd;
-        color: #666;
+        border-top: 1px solid #90caf9;
+        color: #0d47a1;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -56,14 +115,13 @@ st.markdown(f"""
 
 # Sidebar
 with st.sidebar:
-    # ====== 🇭🇹 HAITIAN FLAG ======
+    # Haitian flag
     st.image(
         "https://raw.githubusercontent.com/Deslandes1/G-Cripto-Currency-/main/2000px-Flag_of_Haiti_1859%E2%80%931964.png",
         width=120
     )
     st.caption("🇭🇹 Haiti – G Cryptocurrency")
     st.markdown("---")
-
     st.markdown("### Navigation")
 
     if auth.is_logged_in():

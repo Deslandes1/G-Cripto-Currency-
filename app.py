@@ -56,7 +56,14 @@ st.markdown(f"""
 
 # Sidebar
 with st.sidebar:
-    st.image("https://via.placeholder.com/150x150?text=G", width=150)
+    # ====== 🇭🇹 HAITIAN FLAG ======
+    st.image(
+        "https://raw.githubusercontent.com/Deslandes1/G-Cripto-Currency-/main/2000px-Flag_of_Haiti_1859%E2%80%931964.png",
+        width=120
+    )
+    st.caption("🇭🇹 Haiti – G Cryptocurrency")
+    st.markdown("---")
+
     st.markdown("### Navigation")
 
     if auth.is_logged_in():
